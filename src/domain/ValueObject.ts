@@ -48,9 +48,26 @@ export abstract class ValueObject<Props extends {}> {
       if (keys1.length !== keys2.length) {
         return false;
       }
-      return keys1.every(
-        key => props2.hasOwnProperty(key) && props2[key] === props1[key]
-      );
+      interface EqualLike<T> {
+        equals(obj: T): boolean;
+      }
+      return keys1.every(key => {
+        if (!props2.hasOwnProperty(key)) {
+          return false;
+        }
+        const v1 = props2[key];
+        const v2 = props2[key];
+
+        if (
+          (v1 as EqualLike<typeof v1>).hasOwnProperty('equals') &&
+          (v2 as EqualLike<typeof v2>).hasOwnProperty('equals')
+        ) {
+          return (v1 as EqualLike<typeof v1>).equals(
+            v2 as EqualLike<typeof v2>
+          );
+        }
+        return v1 === v2;
+      });
     };
     return shallowObjectEqual(this.props, obj.props);
   }
