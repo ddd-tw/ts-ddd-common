@@ -7,6 +7,12 @@ interface TestVoProps {
 
 class TestVo extends ValueObject<TestVoProps> {}
 
+interface AdvancedTestVoProps {
+  testVo: TestVo;
+}
+
+class AdvancedTestVo extends ValueObject<AdvancedTestVoProps> {}
+
 describe('Value Object', () => {
   const name = 'vo';
   const email = 'vo@mail.com';
@@ -30,7 +36,10 @@ describe('Value Object', () => {
 
   it('should have equality', () => {
     const testVo2 = new TestVo({ name, email });
-    const equaled = testVo.equals(testVo2);
+    const adVo1 = new AdvancedTestVo({ testVo: testVo });
+    const adVo2 = new AdvancedTestVo({ testVo: testVo2 });
+
+    const equaled = adVo1.equals(adVo2);
     expect(equaled).toBeTruthy();
   });
 });
